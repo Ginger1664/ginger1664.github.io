@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ginger1664.github.io.git","root":"/","images":"/images","scheme":"Pisces","version":"8.6.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="依赖版本说明： react: 17.0.1 react-native: 0.64.2 realm: 10.6.0  一、安装 realm 高版本可以直接自动安装 realm  安装命令： 12345# 使用 npm 安装 realmnpm install realm --save# 安装 ios 依赖cd ios &amp;&amp; pod install &amp;&amp; cd ..">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react-native realm 基本使用">
+<meta property="og:url" content="https://ginger1664.github.io.git/2021/11/14/react-native-realm-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Ginger&#39;s Blog">
+<meta property="og:description" content="依赖版本说明： react: 17.0.1 react-native: 0.64.2 realm: 10.6.0  一、安装 realm 高版本可以直接自动安装 realm  安装命令： 12345# 使用 npm 安装 realmnpm install realm --save# 安装 ios 依赖cd ios &amp;&amp; pod install &amp;&amp; cd ..">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-14T06:13:34.000Z">
+<meta property="article:modified_time" content="2021-12-02T11:17:14.451Z">
+<meta property="article:author" content="Ginger">
+<meta property="article:tag" content="react-native">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ginger1664.github.io.git/2021/11/14/react-native-realm-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ginger1664.github.io.git/2021/11/14/react-native-realm-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/","path":"2021/11/14/react-native-realm-基本使用/","title":"react-native realm 基本使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>react-native realm 基本使用 | Ginger's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Ginger's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Keep going</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%89%E8%A3%85-realm"><span class="nav-number">1.</span> <span class="nav-text">一、安装 realm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9A%E4%B9%89%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">二、定义表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96-realm-%E5%8F%8A%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">三、初始化 realm 及使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">4.</span> <span class="nav-text">四、基本操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%A1%A8%E7%BB%93%E6%9E%84%E4%BF%AE%E6%94%B9"><span class="nav-number">5.</span> <span class="nav-text">五、表结构修改</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ginger"
+      src="/images/favicon-32x32.png">
+  <p class="site-author-name" itemprop="name">Ginger</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Ginger1664" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Ginger1664" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ginger1664.github.io.git/2021/11/14/react-native-realm-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/favicon-32x32.png">
+      <meta itemprop="name" content="Ginger">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ginger's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          react-native realm 基本使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-14 14:13:34" itemprop="dateCreated datePublished" datetime="2021-11-14T14:13:34+08:00">2021-11-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-02 19:17:14" itemprop="dateModified" datetime="2021-12-02T19:17:14+08:00">2021-12-02</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>依赖版本说明：</p>
+<p>react: 17.0.1</p>
+<p>react-native: 0.64.2</p>
+<p>realm: 10.6.0</p>
+</blockquote>
+<h4 id="一、安装-realm"><a href="#一、安装-realm" class="headerlink" title="一、安装 realm"></a>一、安装 realm</h4><blockquote>
+<p>高版本可以直接自动安装 realm</p>
+</blockquote>
+<p>安装命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 使用 npm 安装 realm</span></span><br><span class="line">npm install realm --save</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装 ios 依赖</span></span><br><span class="line">cd ios &amp;&amp; pod install &amp;&amp; cd ..</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h4 id="二、定义表结构"><a href="#二、定义表结构" class="headerlink" title="二、定义表结构"></a>二、定义表结构</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 定义表结构示例</span></span><br><span class="line"><span class="comment"> * name - 表名称</span></span><br><span class="line"><span class="comment"> * properties - 表结构</span></span><br><span class="line"><span class="comment"> * primaryKey - 唯一主键</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> TaskSchema = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Task&quot;</span>,</span><br><span class="line">  <span class="attr">properties</span>: &#123;</span><br><span class="line">    <span class="attr">_id</span>: <span class="string">&quot;int&quot;</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">    <span class="attr">status</span>: <span class="string">&quot;string?&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">primaryKey</span>: <span class="string">&quot;_id&quot;</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>列类型说明<ul>
+<li>bool：映射到 <code>JS</code> 的 <code>Boolean</code> 类型。</li>
+<li>int：映射到 <code>JS</code> 的 <code>Number</code> 类型，在 <code>realm</code> 中，以 64 bits 存储。</li>
+<li>float：映射到 <code>JS</code> 的 <code>Number</code> 类型，在 <code>realm</code> 中，以 32 bits 存储。</li>
+<li>double：映射到 <code>JS</code> 的 <code>Number</code> 类型，在 <code>realm</code> 中，以 64 bits 存储。</li>
+<li>string：映射到 <code>JS</code> 的 <code>String</code> 类型。</li>
+<li>decimal128：用于更高精度的数字。</li>
+<li>objectId：映射到 <code>BSON</code> 的 <code>ObjectId</code> 类型。</li>
+<li>data：映射到 <code>JS</code> 的 <code>ArrayBuffer</code> 类型。</li>
+<li>date：映射到 <code>JS</code> 的 <code>Date</code> 类型。</li>
+<li>list：映射到 <code>JS</code> 的 <code>Array</code> 类型，将 <code>[]</code> 加到类型后来指定为该原生类型的数组。</li>
+<li>linkingObjects：用于定义逆关系的特殊类型。</li>
+<li>dictionary：键值对。使用 <code>&#123;&#125;</code> 来定义类型。</li>
+<li>set：集合类型，使用 <code>数据类型&lt;&gt;</code> 来定义。</li>
+<li>mixed：可以用来存放不同的数据类型。</li>
+<li>uuid：是来自 Realm.BSON 的通用唯一标识符。</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li>定义可选类型：在类型后附加一个<code>?</code>。</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> DogSchema = &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&quot;Dog&quot;</span>,</span><br><span class="line">    <span class="attr">properties</span>: &#123;</span><br><span class="line">      <span class="attr">breed</span>: <span class="string">&quot;string?&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="3">
+<li>指定逐渐：<code>primaryKey:&#39;_id&#39;</code>。</li>
+<li>索引属性：指定索引会增加读的速度，减慢写的速度，使用 <code>=</code> 时最有效。</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> BookSchema = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Book&quot;</span>,</span><br><span class="line">  <span class="attr">properties</span>: &#123;</span><br><span class="line">    <span class="attr">name</span>: &#123; <span class="attr">type</span>: <span class="string">&quot;string&quot;</span>, <span class="attr">indexed</span>: <span class="literal">true</span> &#125;,</span><br><span class="line">    <span class="attr">price</span>: <span class="string">&quot;int&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>定义默认值：要定义默认值，请将属性值设置为具有<code>type</code>字段和<code>default</code>字段的对象 。</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> CarSchema = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&quot;Car&quot;</span>,</span><br><span class="line">  <span class="attr">properties</span>: &#123;</span><br><span class="line">    <span class="attr">make</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">    <span class="attr">model</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">    <span class="attr">miles</span>: &#123; <span class="attr">type</span>: <span class="string">&quot;int&quot;</span>, <span class="attr">default</span>: <span class="number">0</span> &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="三、初始化-realm-及使用"><a href="#三、初始化-realm-及使用" class="headerlink" title="三、初始化 realm 及使用"></a>三、初始化 realm 及使用</h4><ol>
+<li>new Realm vs Realm.open</li>
+</ol>
+<h4 id="四、基本操作"><a href="#四、基本操作" class="headerlink" title="四、基本操作"></a>四、基本操作</h4><ol>
+<li>增</li>
+<li>查</li>
+<li>改</li>
+<li>删</li>
+</ol>
+<h4 id="五、表结构修改"><a href="#五、表结构修改" class="headerlink" title="五、表结构修改"></a>五、表结构修改</h4><p>在 <code>Realm.Configration</code> 里面增加 <code>version</code> </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> realm = <span class="keyword">new</span> Realm(&#123;</span><br><span class="line">    <span class="attr">schema</span>: [Person],</span><br><span class="line">    <span class="attr">schemaVersion</span>: <span class="number">2</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/react-native/" rel="tag"># react-native</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/02/AAVE-LendingPool-%E5%90%88%E7%BA%A6%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E/" rel="next" title="AAVE LendingPool(V2) 合约方法说明">
+                  AAVE LendingPool(V2) 合约方法说明 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ginger</span>
+</div><script defer src="/lib/three.js"></script><script defer src="/lib/lines.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+
+</body>
+</html>

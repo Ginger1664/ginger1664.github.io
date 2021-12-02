@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ginger1664.github.io.git","root":"/","images":"/images","scheme":"Pisces","version":"8.6.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="0 合约介绍LendingPool 合约是 aave protocol 的主要合约。所有面向用户的方法，都可以使用智能合约或者web3调用。 主合约源代码地址：点击查看  方法 deposit, borrow, withdraw and repay 只支持 ERC20，如果需要调用原生币（ETH、MATIC等）需要使用 WETHGateway。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AAVE LendingPool(V2) 合约方法说明">
+<meta property="og:url" content="https://ginger1664.github.io.git/2021/12/02/AAVE-LendingPool-%E5%90%88%E7%BA%A6%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E/index.html">
+<meta property="og:site_name" content="Ginger&#39;s Blog">
+<meta property="og:description" content="0 合约介绍LendingPool 合约是 aave protocol 的主要合约。所有面向用户的方法，都可以使用智能合约或者web3调用。 主合约源代码地址：点击查看  方法 deposit, borrow, withdraw and repay 只支持 ERC20，如果需要调用原生币（ETH、MATIC等）需要使用 WETHGateway。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-02T03:53:58.000Z">
+<meta property="article:modified_time" content="2021-12-02T11:16:53.620Z">
+<meta property="article:author" content="Ginger">
+<meta property="article:tag" content="blockchain">
+<meta property="article:tag" content="defi">
+<meta property="article:tag" content="smart contract">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ginger1664.github.io.git/2021/12/02/AAVE-LendingPool-%E5%90%88%E7%BA%A6%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ginger1664.github.io.git/2021/12/02/AAVE-LendingPool-%E5%90%88%E7%BA%A6%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E/","path":"2021/12/02/AAVE-LendingPool-合约方法说明/","title":"AAVE LendingPool(V2) 合约方法说明"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>AAVE LendingPool(V2) 合约方法说明 | Ginger's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Ginger's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Keep going</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%90%88%E7%BA%A6%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">0 合约介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%90%88%E7%BA%A6%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">1 合约方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#deposit-%E5%AD%98%E6%AC%BE"><span class="nav-number">2.1.</span> <span class="nav-text">deposit - 存款</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#withdraw-%E5%8F%96%E6%AC%BE"><span class="nav-number">2.2.</span> <span class="nav-text">withdraw - 取款</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#borrow-%E5%80%9F%E6%AC%BE"><span class="nav-number">2.3.</span> <span class="nav-text">borrow - 借款</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#repay-%E8%BF%98%E6%AC%BE"><span class="nav-number">2.4.</span> <span class="nav-text">repay - 还款</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#swapBorrowRateMode-%E4%BF%AE%E6%94%B9%E5%80%9F%E6%AC%BE%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.5.</span> <span class="nav-text">swapBorrowRateMode - 修改借款模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setUserUseReserveAsCollateral-%E8%AE%BE%E7%BD%AE%E8%B5%84%E4%BA%A7%E6%98%AF%E5%90%A6%E8%83%BD%E4%BD%9C%E4%B8%BA%E6%8A%B5%E6%8A%BC%E7%89%A9"><span class="nav-number">2.6.</span> <span class="nav-text">setUserUseReserveAsCollateral - 设置资产是否能作为抵押物</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#liquidationCall"><span class="nav-number">2.7.</span> <span class="nav-text">liquidationCall</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flashLoan-%E9%97%AA%E8%B4%B7"><span class="nav-number">2.8.</span> <span class="nav-text">flashLoan - 闪贷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%90%88%E7%BA%A6%E5%9C%B0%E5%9D%80"><span class="nav-number">3.</span> <span class="nav-text">2 合约地址</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ginger"
+      src="/images/favicon-32x32.png">
+  <p class="site-author-name" itemprop="name">Ginger</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Ginger1664" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Ginger1664" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ginger1664.github.io.git/2021/12/02/AAVE-LendingPool-%E5%90%88%E7%BA%A6%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/favicon-32x32.png">
+      <meta itemprop="name" content="Ginger">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ginger's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AAVE LendingPool(V2) 合约方法说明
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-12-02 11:53:58 / 修改时间：19:16:53" itemprop="dateCreated datePublished" datetime="2021-12-02T11:53:58+08:00">2021-12-02</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="0-合约介绍"><a href="#0-合约介绍" class="headerlink" title="0 合约介绍"></a>0 合约介绍</h2><p><code>LendingPool</code> 合约是 <code>aave protocol</code> 的主要合约。所有面向用户的方法，都可以使用智能合约或者web3调用。</p>
+<p>主合约源代码地址：<a target="_blank" rel="noopener" href="https://github.com/aave/protocol-v2/blob/ice/mainnet-deployment-03-12-2020/contracts/protocol/lendingpool/LendingPool.sol">点击查看</a></p>
+<blockquote>
+<p>方法 deposit, borrow, withdraw and repay 只支持 ERC20，如果需要调用原生币（ETH、MATIC等）需要使用 <a target="_blank" rel="noopener" href="https://docs.aave.com/developers/the-core-protocol/weth-gateway">WETHGateway</a>。</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="1-合约方法"><a href="#1-合约方法" class="headerlink" title="1 合约方法"></a>1 合约方法</h2><blockquote>
+<p>Tips:</p>
+<ol>
+<li>所有的数量都不带精度</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>一些通用参数</p>
+<ul>
+<li>asset: 币种地址</li>
+<li>referralCode: 自己调用就写0</li>
+<li>onBehalfOf: 行为地址。合约调用填入 <code>msg.sender</code></li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="deposit-存款"><a href="#deposit-存款" class="headerlink" title="deposit - 存款"></a>deposit - 存款</h3><p><code>function deposit(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)</code></p>
+<p>amount: 充入的数量</p>
+<blockquote>
+<p>注意⚠️：调用前需要先调用该币种的<code>approve</code>方法，给予改合约足够的额度。</p>
+</blockquote>
+<hr>
+<h3 id="withdraw-取款"><a href="#withdraw-取款" class="headerlink" title="withdraw - 取款"></a>withdraw - 取款</h3><p><code>function withdraw(address asset, uint256 amount, address to)</code></p>
+<p>amount: 提币数量。使用 <code>type(uint).max</code> 提出所有余额。</p>
+<p>to: 接收提币的地址</p>
+<hr>
+<h3 id="borrow-借款"><a href="#borrow-借款" class="headerlink" title="borrow - 借款"></a>borrow - 借款</h3><p><code>function borrow(address asset, uint256 amount, uint256 interestRateMode, uint16 referralCode, address onBehalfOf)</code></p>
+<p>amount: 想要借出的数量</p>
+<p>interestRateMode: 利率模式。1，固定利率。2，浮动利率。</p>
+<hr>
+<h3 id="repay-还款"><a href="#repay-还款" class="headerlink" title="repay - 还款"></a>repay - 还款</h3><p><code>function repay(address asset, uint256 amount, uint256 rateMode, address onBehalfOf)</code></p>
+<p>amount: 还款数量。只有自己调用时才可以使用<code>uint(-1)</code>进行全部还款。第三方调用时，建议还款数量略大于目前的借款数量。</p>
+<p>rateMode: 借款利率模式。1，固定利率。2，浮动利率。</p>
+<hr>
+<h3 id="swapBorrowRateMode-修改借款模式"><a href="#swapBorrowRateMode-修改借款模式" class="headerlink" title="swapBorrowRateMode - 修改借款模式"></a>swapBorrowRateMode - 修改借款模式</h3><p><code>function swapBorrowRateMode(address asset, uint256 rateMode)</code></p>
+<p>rateMode: 借款利率模式。1，固定利率。2，浮动利率。</p>
+<hr>
+<h3 id="setUserUseReserveAsCollateral-设置资产是否能作为抵押物"><a href="#setUserUseReserveAsCollateral-设置资产是否能作为抵押物" class="headerlink" title="setUserUseReserveAsCollateral - 设置资产是否能作为抵押物"></a>setUserUseReserveAsCollateral - 设置资产是否能作为抵押物</h3><p><code>function setUserUseReserveAsCollateral(address asset, bool useAsCollateral)</code></p>
+<p>useAsCollateral: <code>true</code>可以作为抵押物</p>
+<hr>
+<h3 id="liquidationCall"><a href="#liquidationCall" class="headerlink" title="liquidationCall"></a>liquidationCall</h3><p><code>function liquidationCall(address collateral, address debt, address user, uint256 debtToCover, bool receiveAToken)</code></p>
+<hr>
+<h3 id="flashLoan-闪贷"><a href="#flashLoan-闪贷" class="headerlink" title="flashLoan - 闪贷"></a>flashLoan - 闪贷</h3><p><code>function flashLoan(address receiverAddress, address[] calldata assets, uint256[] calldata amounts, uint256[] modes, address onBehalfOf, bytes calldata params, uint16 referralCode)</code></p>
+<p>receiverAddress: 接收贷款的地址</p>
+<p>assets: 资产地址列表，注意是列表。</p>
+<p>amounts: 对应的资产数量，注意是列表。</p>
+<p>modes: 如果没有还款成功，要选择的贷款方式。0，不要贷款直接revert。1，固定利率贷款。2，浮动利率贷款。注意是列表。（建议选0）</p>
+<p>onBehalfOf: 如果贷款模式不是0，这笔贷款就会记在这个地址上。需确认 onBehalfOf 的地址已经 approve 了足够的金额给 <code>msg.sender</code></p>
+<p>params: 要传回 <code>receiverAddress</code> 合约地址的参数的字节编码。</p>
+<blockquote>
+<p>使用闪贷的合约中需要存在 <code>executeOperation</code> 方法，在合约接收到贷款时，会回调改方法，在该方法的最后需要 <code>approve</code> 给 <code>LendingPool</code> 合约对应需要还款的数量，结束时会自动收回贷款及贷款手续费。</p>
+</blockquote>
+<h2 id="2-合约地址"><a href="#2-合约地址" class="headerlink" title="2 合约地址"></a>2 合约地址</h2><p><a target="_blank" rel="noopener" href="https://docs.aave.com/developers/deployed-contracts/deployed-contracts">ETH contracts</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.aave.com/developers/deployed-contracts/matic-polygon-market">Matic contracts</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.aave.com/developers/deployed-contracts/avalanche-market">Avalanche contracts</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/blockchain/" rel="tag"># blockchain</a>
+              <a href="/tags/defi/" rel="tag"># defi</a>
+              <a href="/tags/smart-contract/" rel="tag"># smart contract</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/11/14/react-native-realm-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" rel="prev" title="react-native realm 基本使用">
+                  <i class="fa fa-chevron-left"></i> react-native realm 基本使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ginger</span>
+</div><script defer src="/lib/three.js"></script><script defer src="/lib/lines.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+
+</body>
+</html>
