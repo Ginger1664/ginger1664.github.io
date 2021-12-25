@@ -30,7 +30,7 @@
 <meta property="og:description" content="0 合约介绍LendingPool 合约是 aave protocol 的主要合约。所有面向用户的方法，都可以使用智能合约或者web3调用。 主合约源代码地址：点击查看  方法 deposit, borrow, withdraw and repay 只支持 ERC20，如果需要调用原生币（ETH、MATIC等）需要使用 WETHGateway。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-12-02T03:53:58.000Z">
-<meta property="article:modified_time" content="2021-12-02T11:16:53.620Z">
+<meta property="article:modified_time" content="2021-12-25T15:04:17.191Z">
 <meta property="article:author" content="Ginger">
 <meta property="article:tag" content="blockchain">
 <meta property="article:tag" content="defi">
@@ -203,10 +203,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-12-02 11:53:58 / 修改时间：19:16:53" itemprop="dateCreated datePublished" datetime="2021-12-02T11:53:58+08:00">2021-12-02</time>
+      <time title="创建时间：2021-12-02 11:53:58" itemprop="dateCreated datePublished" datetime="2021-12-02T11:53:58+08:00">2021-12-02</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-25 23:04:17" itemprop="dateModified" datetime="2021-12-25T23:04:17+08:00">2021-12-25</time>
+      </span>
 
   
 </div>
@@ -242,20 +248,32 @@
 <h3 id="deposit-存款"><a href="#deposit-存款" class="headerlink" title="deposit - 存款"></a>deposit - 存款</h3><p><code>function deposit(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)</code></p>
 <p>amount: 充入的数量</p>
 <blockquote>
-<p>注意⚠️：调用前需要先调用该币种的<code>approve</code>方法，给予改合约足够的额度。</p>
+<p>注意⚠️：调用前需要先调用该币种的 <code>approve</code> 方法，给予改合约足够的额度。谁调用 LendingPool 谁给额度。如果是你调用你的合约去调用 LendingPool，那么就该你的合约 approve 给 LendingPool。</p>
 </blockquote>
+<p><strong>合约调用代码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 合约是需要先有资产余额，才能转入</span><br><span class="line">function deposit(address asset, uint256 amount) public &#123;</span><br><span class="line">  IERC20 _asset = IERC20(asset);</span><br><span class="line"></span><br><span class="line">  // 需要先将资产从 msg.sender 转入到合约中</span><br><span class="line">  _asset.transferFrom(msg.sender, address(this), amount)</span><br><span class="line"></span><br><span class="line">  // 该合约也需要给 LendingPool approve 对应的额度</span><br><span class="line">  _asset.approve(address(_lendingPool), amount);</span><br><span class="line"></span><br><span class="line">  // deposit，但是对应归属记录到 msg.sender 上</span><br><span class="line">  _lendingPool.deposit(asset, amount, msg.sender, 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h3 id="withdraw-取款"><a href="#withdraw-取款" class="headerlink" title="withdraw - 取款"></a>withdraw - 取款</h3><p><code>function withdraw(address asset, uint256 amount, address to)</code></p>
 <p>amount: 提币数量。使用 <code>type(uint).max</code> 提出所有余额。</p>
 <p>to: 接收提币的地址</p>
+<p><strong>合约调用代码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 需要先将 aToken 转入合约，才能提款</span><br><span class="line">function withdraw(address asset, uint256 amount) public &#123;</span><br><span class="line">  // 获得 aToken 地址</span><br><span class="line">  (address aTokenAddress,,) = _dataProvider.getReserveTokensAddresses(asset);</span><br><span class="line"></span><br><span class="line">  // 先把 aToken 转到合约中来</span><br><span class="line">  IERC20(aTokenAddress).transferFrom(msg.sender, address(this), amount);</span><br><span class="line"></span><br><span class="line">  // 再取出 asset</span><br><span class="line">  _lendingPool.withdraw(asset, amount, address(this));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h3 id="borrow-借款"><a href="#borrow-借款" class="headerlink" title="borrow - 借款"></a>borrow - 借款</h3><p><code>function borrow(address asset, uint256 amount, uint256 interestRateMode, uint16 referralCode, address onBehalfOf)</code></p>
 <p>amount: 想要借出的数量</p>
 <p>interestRateMode: 利率模式。1，固定利率。2，浮动利率。</p>
+<p><strong>合约调用代码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 借款，借到的余额会打到这个合约里面，需要 vToken 或者 sToken 先 approveDelegation 给该合约</span><br><span class="line">function borrow(address asset, uint256 amount) private &#123;</span><br><span class="line">  // 选择 2 浮动利率</span><br><span class="line">  _lendingPool.borrow(asset, amount, 2, 0, msg.sender);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h3 id="repay-还款"><a href="#repay-还款" class="headerlink" title="repay - 还款"></a>repay - 还款</h3><p><code>function repay(address asset, uint256 amount, uint256 rateMode, address onBehalfOf)</code></p>
 <p>amount: 还款数量。只有自己调用时才可以使用<code>uint(-1)</code>进行全部还款。第三方调用时，建议还款数量略大于目前的借款数量。</p>
 <p>rateMode: 借款利率模式。1，固定利率。2，浮动利率。</p>
+<p><strong>合约调用代码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 合约是需要先有资产余额，才能还款（如果还款没有用完，余额会在合约里面，需要自己转出来，或者 deposit 到 LendingPool 里面）</span><br><span class="line">function deposit(address asset, uint256 amount) public &#123;</span><br><span class="line">  IERC20 _asset = IERC20(asset);</span><br><span class="line"></span><br><span class="line">  // 需要先将资产从 msg.sender 转入到合约中</span><br><span class="line">  _asset.transferFrom(msg.sender, address(this), amount)</span><br><span class="line"></span><br><span class="line">  // 该合约也需要给 LendingPool approve 对应的额度</span><br><span class="line">  _asset.approve(address(_lendingPool), amount);</span><br><span class="line"></span><br><span class="line">  // repay msg.sender 的借款</span><br><span class="line">  _lendingPool.repay(asset, amount, 2, msg.sender);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h3 id="swapBorrowRateMode-修改借款模式"><a href="#swapBorrowRateMode-修改借款模式" class="headerlink" title="swapBorrowRateMode - 修改借款模式"></a>swapBorrowRateMode - 修改借款模式</h3><p><code>function swapBorrowRateMode(address asset, uint256 rateMode)</code></p>
 <p>rateMode: 借款利率模式。1，固定利率。2，浮动利率。</p>
